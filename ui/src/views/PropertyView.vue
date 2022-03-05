@@ -40,6 +40,10 @@
         </tr>
       </tbody>
     </table>
+    <h6 class="fw-bold">
+      Kilóméteróra állása, Rendszám, Motor, Lámpa, Kézifék, Nitro, AirRide, Neon Motor, Fék, Turbo, ECU, Váltó, Kerék, Súlycsökkentés,
+      Felfüggesztés
+    </h6>
   </div>
 </template>
 
