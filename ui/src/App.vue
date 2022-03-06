@@ -55,7 +55,7 @@
     height: 100%;
   }
 
-  input,
+  input:not([type='checkbox']),
   .input-group-text {
     color: white !important;
     background: rgb(35, 35, 35) !important;
