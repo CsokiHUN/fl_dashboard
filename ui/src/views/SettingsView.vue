@@ -5,7 +5,7 @@
     <ul>
       <li v-for="(data, name) in settings" :key="name">
         <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" v-model="data.value" checked />
+          <input class="form-check-input" type="checkbox" v-model="data.value" @change="updateSetting($event, name)" checked />
           {{ data.label }}
         </div>
       </li>
@@ -31,8 +31,19 @@
             label: 'Nem tudom mi',
             value: false,
           },
+          hehe: {
+            label: 'Hehe',
+            value: true,
+          },
         },
       };
+    },
+    methods: {
+      updateSetting(event, name) {
+        const { checked } = event.target;
+
+        console.log('setting changed', name, checked);
+      },
     },
   };
 </script>

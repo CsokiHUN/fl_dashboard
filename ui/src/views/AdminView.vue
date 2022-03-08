@@ -43,8 +43,8 @@
       return {
         search: '',
         admins: [
-          { id: 1, name: 'Csoki' },
-          { id: 2, name: 'Adam' },
+          // { id: 1, name: 'Csoki', group: 'admin' },
+          // { id: 2, name: 'Adam', group: 'admin' },
         ],
       };
     },
@@ -56,6 +56,11 @@
           isNaN(parseInt(this.search)) ? user.name.toLowerCase().includes(this.search.toLowerCase()) : parseInt(this.search) == user.id
         );
       },
+    },
+    async created() {
+      const response = await fetch(`https://${GetParentResourceName()}/requestAdmins`);
+      const { admins } = await response.json();
+      this.admins = admins;
     },
   };
 </script>

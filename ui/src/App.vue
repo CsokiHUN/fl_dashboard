@@ -1,5 +1,5 @@
 <template>
-  <div class="main d-flex">
+  <div v-if="visible" class="main d-flex">
     <LeftMenu />
 
     <div class="right-side">
@@ -21,16 +21,29 @@
     components: {
       LeftMenu,
     },
+    data() {
+      return {
+        visible: true,
+      };
+    },
     methods: {
       close() {
         console.log('bezárás');
+        fetch(`https://${GetParentResourceName()}/close`);
       },
+    },
+    mounted() {
+      window.addEventListener('message', ({ data }) => {
+        console.log(data);
+        if (data.visible != undefined) this.visible = data.visible;
+      });
     },
   };
 </script>
 
 <style>
   body {
+    background-color: transparent;
     width: 100vw;
     height: 100vh;
     display: flex;

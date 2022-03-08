@@ -1,5 +1,9 @@
 <template>
-  <div>Prémium Shop</div>
+  <div>
+    Prémium Shop
+
+    <h3 class="text-center mt-5">Hamarosan..</h3>
+  </div>
 </template>
 
 <script>

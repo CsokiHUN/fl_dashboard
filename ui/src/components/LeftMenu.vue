@@ -6,7 +6,7 @@
 
     <div v-for="route in routes" :key="route">
       <router-link :to="route.path">
-        <div class="menu-link p-1 mt-2" v-html="route.name"></div>
+        <div class="menu-link p-1 mt-2" :class="{ active: route.path === currentPath }" v-html="route.name"></div>
       </router-link>
     </div>
   </div>
@@ -18,6 +18,9 @@
     computed: {
       routes() {
         return this.$router.getRoutes();
+      },
+      currentPath() {
+        return this.$route.path;
       },
     },
   };
@@ -43,10 +46,14 @@
   .menu-link {
     background-color: rgb(40, 40, 40);
     border-radius: 0.25em;
-    transition: all 0.5s linear;
+    transition: background-color 0.25s linear;
   }
   .menu-link:hover {
     background-color: rgb(50, 50, 50);
-    transition: all 0.5s linear;
+    transition: background-color 0.25s linear;
+  }
+
+  .active {
+    border-left: 0.25em solid var(--bs-primary);
   }
 </style>
