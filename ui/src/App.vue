@@ -37,6 +37,12 @@
         console.log(data);
         if (data.visible != undefined) this.visible = data.visible;
       });
+
+      document.addEventListener('keydown', ({ key }) => {
+        if (key !== 'Escape') return;
+        if (!this.visible) return;
+        this.close();
+      });
     },
   };
 </script>

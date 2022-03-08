@@ -44,6 +44,16 @@
         ],
       };
     },
+    async created() {
+      const response = await fetch(`https://${GetParentResourceName()}/requestData`, {
+        method: 'POST',
+        body: JSON.stringify({
+          name: 'cards',
+        }),
+      });
+      const { cards } = await response.json();
+      this.cards = cards;
+    },
   };
 </script>
 

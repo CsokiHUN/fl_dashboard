@@ -58,7 +58,12 @@
       },
     },
     async created() {
-      const response = await fetch(`https://${GetParentResourceName()}/requestAdmins`);
+      const response = await fetch(`https://${GetParentResourceName()}/requestData`, {
+        method: 'POST',
+        body: JSON.stringify({
+          name: 'admins',
+        }),
+      });
       const { admins } = await response.json();
       this.admins = admins;
     },
