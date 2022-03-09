@@ -16,28 +16,6 @@
 <script>
   export default {
     name: 'SettingsView',
-    // data() {
-    //   return {
-    //     settings: {
-    //       radar: {
-    //         label: 'Radar megjelenítése',
-    //         value: true,
-    //       },
-    //       hud: {
-    //         label: 'HUD megjelenítése',
-    //         value: true,
-    //       },
-    //       nemtom: {
-    //         label: 'Nem tudom mi',
-    //         value: false,
-    //       },
-    //       hehe: {
-    //         label: 'Hehe',
-    //         value: true,
-    //       },
-    //     },
-    //   };
-    // },
     computed: {
       settings() {
         return this.$root.settings;

@@ -42,10 +42,7 @@
     data() {
       return {
         search: '',
-        admins: [
-          // { id: 1, name: 'Csoki', group: 'admin' },
-          // { id: 2, name: 'Adam', group: 'admin' },
-        ],
+        admins: [],
       };
     },
     computed: {
