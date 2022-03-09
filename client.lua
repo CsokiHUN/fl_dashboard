@@ -19,18 +19,20 @@ Panel = {
 				local vehicles = {}
 
 				for _, vehicleData in pairs(result) do
-					local vehicle = json.decode(vehicleData.vehicle)
-					local name = GetDisplayNameFromVehicleModel(vehicle.model)
+					if vehicleData and vehicleData.vehicle then
+						local vehicle = json.decode(vehicleData.vehicle)
+						local name = GetDisplayNameFromVehicleModel(vehicle.model)
 
-					table.insert(vehicles, {
-						plate = vehicleData.plate or "Ismeretlen",
-						name = name or "Ismeretlen",
-						label = GetLabelText(name) or "Ismeretlen",
-						state = math.floor((vehicle.bodyHealth or 1000) / 10),
-						fuel = vehicle.fuelLevel or 0,
-						stored = (vehicleData.stored or 0) == 1,
-						vehicle = vehicle,
-					})
+						table.insert(vehicles, {
+							plate = vehicleData.plate or "Ismeretlen",
+							name = name or "Ismeretlen",
+							label = GetLabelText(name) or "Ismeretlen",
+							state = math.floor((vehicle.bodyHealth or 1000) / 10),
+							fuel = vehicle.fuelLevel or 0,
+							stored = (vehicleData.stored or 0) == 1,
+							vehicle = vehicle,
+						})
+					end
 				end
 
 				cb({ vehicles = vehicles })
@@ -42,7 +44,10 @@ Panel = {
 		RegisterCommand("dashboard", function()
 			self:toggle()
 		end)
-		RegisterKeyMapping("dashboard", "Dashboard megnyitasa", "keyboard", "HOME")
+		CreateThread(function()
+			Wait(1)
+			RegisterKeyMapping("dashboard", "Dashboard megnyitasa", "keyboard", "HOME")
+		end)
 
 		RegisterNUICallback("close", function(...)
 			self:toggle(...)
@@ -76,11 +81,6 @@ Panel = {
 				loadSettings = settings,
 			})
 		end)
-
-		-- TODO: TEST!!!
-		SendNUIMessage({
-			visible = false,
-		})
 	end,
 
 	toggle = function(self)

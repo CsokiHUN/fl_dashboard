@@ -29,21 +29,21 @@
       </thead>
       <tbody>
         <tr v-for="(vehicle, key) in vehicles" :key="key" @click="select(key)" :class="{ active: selected === key }" class="text-center">
-          <td class="id">{{ vehicle.plate }}</td>
-          <td class="vehicle-name fw-bold">{{ vehicle.label }}</td>
+          <td class="id">{{ vehicle.plate ?? 'Ismeretlen' }}</td>
+          <td class="vehicle-name fw-bold">{{ vehicle.label ?? 'Ismeretlen' }}</td>
           <td
             :style="{
               color: getColor(vehicle.state),
             }"
             class="state"
           >
-            {{ vehicle.state }}%
+            {{ vehicle.state ?? 0 }}%
           </td>
-          <td :style="{ color: getColor(vehicle.fuel) }" class="fuel">{{ vehicle.fuel }}%</td>
+          <td :style="{ color: getColor(vehicle.fuel) }" class="fuel">{{ vehicle.fuel ?? 0 }}%</td>
         </tr>
       </tbody>
     </table>
-    <h6 class="fw-bold">
+    <h6 v-if="currentVehicle !== undefined" class="fw-bold">
       <h5>
         {{ currentVehicle.label }}
       </h5>
@@ -115,6 +115,7 @@
       },
 
       getColor(value) {
+        value = value ?? 0;
         if (value <= 25) return 'red';
         if (value > 25 && value <= 75) return 'orange';
 
