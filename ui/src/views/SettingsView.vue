@@ -16,33 +16,46 @@
 <script>
   export default {
     name: 'SettingsView',
-    data() {
-      return {
-        settings: {
-          radar: {
-            label: 'Radar megjelenítése',
-            value: true,
-          },
-          hud: {
-            label: 'HUD megjelenítése',
-            value: true,
-          },
-          nemtom: {
-            label: 'Nem tudom mi',
-            value: false,
-          },
-          hehe: {
-            label: 'Hehe',
-            value: true,
-          },
-        },
-      };
+    // data() {
+    //   return {
+    //     settings: {
+    //       radar: {
+    //         label: 'Radar megjelenítése',
+    //         value: true,
+    //       },
+    //       hud: {
+    //         label: 'HUD megjelenítése',
+    //         value: true,
+    //       },
+    //       nemtom: {
+    //         label: 'Nem tudom mi',
+    //         value: false,
+    //       },
+    //       hehe: {
+    //         label: 'Hehe',
+    //         value: true,
+    //       },
+    //     },
+    //   };
+    // },
+    computed: {
+      settings() {
+        return this.$root.settings;
+      },
     },
     methods: {
       updateSetting(event, name) {
         const { checked } = event.target;
 
-        console.log('setting changed', name, checked);
+        fetch(`https://${GetParentResourceName()}/updateSetting`, {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            checked,
+          }),
+        });
+
+        localStorage.setItem('dashboard:' + name, checked);
       },
     },
   };

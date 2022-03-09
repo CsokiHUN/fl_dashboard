@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h4 class="text-center">Járműveim (1/1db)</h4>
+    <h4 class="text-center">
+      Járműveim
+      <h6>({{ vehicles.length }}db)</h6>
+    </h4>
 
     <div class="input-group input-group-sm mb-3">
       <span class="input-group-text" id="inputGroup-sizing-sm">
@@ -25,9 +28,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="vehicle in vehicles" :key="vehicle" class="text-center">
+        <tr v-for="(vehicle, key) in vehicles" :key="key" @click="select(key)" :class="{ active: selected === key }" class="text-center">
           <td class="id">{{ vehicle.plate }}</td>
-          <td class="vehicle-name fw-bold">{{ vehicle.name }}</td>
+          <td class="vehicle-name fw-bold">{{ vehicle.label }}</td>
           <td
             :style="{
               color: getColor(vehicle.state),
@@ -36,13 +39,48 @@
           >
             {{ vehicle.state }}%
           </td>
-          <td :style="{ color: getColor(vehicle.state) }" class="fuel">{{ vehicle.fuel }}%</td>
+          <td :style="{ color: getColor(vehicle.fuel) }" class="fuel">{{ vehicle.fuel }}%</td>
         </tr>
       </tbody>
     </table>
     <h6 class="fw-bold">
-      Kilóméteróra állása, Rendszám, Motor, Lámpa, Kézifék, Nitro, AirRide, Neon Motor, Fék, Turbo, ECU, Váltó, Kerék, Súlycsökkentés,
-      Felfüggesztés
+      <h5>
+        {{ currentVehicle.label }}
+      </h5>
+
+      <ul class="current-vehicle">
+        <li>
+          Tárolva:
+          <span :style="{ color: currentVehicle.stored === 1 ? 'green' : 'red' }">{{ currentVehicle.stored === 1 ? 'Igen' : 'Nem' }}</span>
+        </li>
+        <li>Rendszám: {{ currentVehicle.plate }}</li>
+        <li>Szín 1: {{ currentVehicle.vehicle.color1 }} | Szín 2: {{ currentVehicle.vehicle.color2 }}</li>
+        <li>Model: {{ currentVehicle.vehicle.model }} | {{ currentVehicle.name }}</li>
+        <li>
+          Üzemanyag: <span :style="{ color: getColor(currentVehicle.fuel) }">{{ currentVehicle.fuel }}%</span>
+        </li>
+        <li>
+          Motor állapot:
+          <span :style="{ color: getColor(currentVehicle.vehicle.engineHealth / 10) }">
+            {{ Math.floor(currentVehicle.vehicle.engineHealth / 10) }}%
+          </span>
+        </li>
+        <li>
+          Kaszni állapot:
+          <span :style="{ color: getColor(currentVehicle.vehicle.bodyHealth / 10) }">
+            {{ Math.floor(currentVehicle.vehicle.bodyHealth / 10) }}%
+          </span>
+        </li>
+        <li>
+          Tank állapot:
+          <span :style="{ color: getColor(currentVehicle.vehicle.tankHealth / 10) }"
+            >{{ Math.floor(currentVehicle.vehicle.tankHealth / 10) }}%
+          </span>
+        </li>
+      </ul>
+
+      <!-- Kilóméteróra állása, Rendszám, Motor, Lámpa, Kézifék, Nitro, AirRide, Neon Motor, Fék, Turbo, ECU, Váltó, Kerék, Súlycsökkentés,
+      Felfüggesztés -->
     </h6>
   </div>
 </template>
@@ -52,71 +90,48 @@
     name: 'PropertyView',
     data() {
       return {
+        selected: 0,
+
         vehicles: [
-          {
-            plate: 'AAA-001',
-            name: 'Lada 2102',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-002',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-002',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-002',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-002',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-002',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-002',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-002',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
-          {
-            plate: 'AAA-100',
-            name: 'Suzuki Swift',
-            state: 100,
-            fuel: 100,
-          },
+          // {
+          //   plate: 'AAA-001',
+          //   name: 'Lada 2102',
+          //   state: 100,
+          //   fuel: 100,
+          // },
         ],
       };
     },
+    computed: {
+      currentVehicle() {
+        return this.vehicles[this.selected];
+      },
+    },
     methods: {
+      select(key) {
+        if (!this.vehicles[key]) return;
+
+        this.selected = key;
+      },
+
       getColor(value) {
         if (value <= 25) return 'red';
         if (value > 25 && value <= 75) return 'orange';
 
         return 'green';
       },
+    },
+    async created() {
+      this.selected = 0;
+
+      const response = await fetch(`https://${GetParentResourceName()}/requestData`, {
+        method: 'POST',
+        body: JSON.stringify({
+          name: 'property',
+        }),
+      });
+      const { vehicles } = await response.json();
+      this.vehicles = vehicles;
     },
   };
 </script>
@@ -131,7 +146,7 @@
   }
 
   table .id {
-    width: 5em;
+    width: 5.5em;
   }
 
   table .state,
@@ -144,7 +159,7 @@
   }
 
   thead .vehicle-name {
-    width: 28em;
+    width: 29.5em;
   }
 
   tr {
@@ -160,5 +175,13 @@
 
   thead tr {
     display: block;
+  }
+
+  .active {
+    background-color: rgb(35, 35, 35);
+  }
+
+  .current-vehicle {
+    font-size: 0.9em;
   }
 </style>

@@ -23,7 +23,9 @@
     },
     data() {
       return {
-        visible: true,
+        visible: false,
+
+        settings: {},
       };
     },
     methods: {
@@ -34,8 +36,35 @@
     },
     mounted() {
       window.addEventListener('message', ({ data }) => {
-        console.log(data);
-        if (data.visible != undefined) this.visible = data.visible;
+        if (data.visible !== undefined) this.visible = data.visible;
+
+        if (data.loadSettings !== undefined) {
+          this.settings = {};
+
+          for (const setting of data.loadSettings) {
+            let stored = localStorage.getItem('dashboard:' + setting.name);
+            stored = stored === null ? setting.defaultValue : stored === 'true';
+            this.settings[setting.name] = {
+              label: setting.label,
+              value: stored,
+            };
+
+            fetch(`https://${GetParentResourceName()}/updateSetting`, {
+              method: 'POST',
+              body: JSON.stringify({
+                name: setting.name,
+                checked: stored,
+                storeLoad: true,
+              }),
+            });
+          }
+        }
+
+        if (data.saveSettings !== undefined) {
+          for (const setting of data.saveSettings) {
+            localStorage.setItem('dashboard:' + setting.name, setting.state);
+          }
+        }
       });
 
       document.addEventListener('keydown', ({ key }) => {
@@ -48,8 +77,12 @@
 </script>
 
 <style>
+  * {
+    user-select: none;
+  }
+
   body {
-    background-color: transparent;
+    background-color: transparent !important;
     width: 100vw;
     height: 100vh;
     display: flex;

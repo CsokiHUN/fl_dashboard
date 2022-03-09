@@ -2,11 +2,14 @@
   <div class="home">
     <h4>Clark Melton</h4>
 
+    <h4 v-if="cards.length <= 0" class="text-center mt-5">Betöltés...</h4>
+
     <div class="cards d-flex flex-wrap justify-content-center align-items-center">
       <div v-for="card in cards" :key="card" class="card p-2 m-2">
         <span class="title">{{ card.title }}</span>
         <span
           class="value"
+          :class="{ blur: card.blur }"
           :style="{
             color: card.color ?? 'lightgray',
           }"
@@ -23,24 +26,21 @@
     data() {
       return {
         cards: [
-          { title: 'ID', value: 1, color: 'red' },
-          { title: 'Steam Név', value: 'Csoki', color: 'red' },
-          { title: 'Születési Idő', value: '1900-01-01', color: 'green' },
-          { title: 'Magasság', value: '200cm', color: 'green' },
-
-          { title: 'Készpénz', value: '1$', color: 'green' },
-          { title: 'Piszkos pénz', value: '1$', color: 'red' },
-          { title: 'Banki egyenleg', value: '1$', color: 'orange' },
-          { title: 'Járművek', value: '1db', color: 'orange' },
-
-          { title: 'Group', value: 'admin', color: 'yellow' },
-          { title: 'Job', value: 'police', color: 'lightgray' },
-          { title: 'Job Grade', value: 'járőr', color: 'lightgray' },
-          { title: 'Fizetésed', value: '-100$', color: 'lightgray' },
-
-          { title: 'Identifier', value: '03475054c83371850aef1b58e686e623', color: 'lightgray' },
-          { title: 'Játszott idő', value: '0 perc', color: 'lightgray' },
-          { title: 'Online idő', value: '0 perc', color: 'lightgray' },
+          // { title: 'ID', value: 1, color: 'red' },
+          // { title: 'Steam Név', value: 'Csoki', color: 'red' },
+          // { title: 'Születési Idő', value: '1900-01-01', color: 'green' },
+          // { title: 'Magasság', value: '200cm', color: 'green' },
+          // { title: 'Készpénz', value: '1$', color: 'green' },
+          // { title: 'Piszkos pénz', value: '1$', color: 'red' },
+          // { title: 'Banki egyenleg', value: '1$', color: 'orange' },
+          // { title: 'Járművek', value: '1db', color: 'orange' },
+          // { title: 'Group', value: 'admin', color: 'yellow' },
+          // { title: 'Job', value: 'police', color: 'lightgray' },
+          // { title: 'Job Grade', value: 'járőr', color: 'lightgray' },
+          // { title: 'Fizetésed', value: '-100$', color: 'lightgray' },
+          // { title: 'Identifier', value: '03475054c83371850aef1b58e686e623', color: 'lightgray' },
+          // { title: 'Játszott idő', value: '0 perc', color: 'lightgray' },
+          // { title: 'Online idő', value: '0 perc', color: 'lightgray' },
         ],
       };
     },
@@ -81,5 +81,13 @@
   .card .value {
     text-align: right;
     font-style: italic;
+  }
+
+  .blur {
+    filter: blur(0.25em);
+  }
+
+  .blur:hover {
+    filter: blur(0);
   }
 </style>
