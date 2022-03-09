@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkdashboard"]=self["webpackChunkdashboard"]||[]).push([[914],{6914:function(n,r,e){e.r(r),e.d(r,{default:function(){return h}});var a=e(3396);const t=(0,a.Uk)(" Prémium Shop "),u=(0,a._)("h3",{class:"text-center mt-5"},"Hamarosan..",-1),s=[t,u];function c(n,r,e,t,u,c){return(0,a.wg)(),(0,a.iD)("div",null,s)}var i={name:"PremiumView"},o=e(89);const d=(0,o.Z)(i,[["render",c]]);var h=d}}]);
+//# sourceMappingURL=914.6306173d.js.map

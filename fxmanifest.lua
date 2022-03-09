@@ -16,5 +16,5 @@ files({
 	"ui/dist/**",
 })
 
--- ui_page("ui/dist/index.html")
-ui_page("http://192.168.1.17:8080")
+ui_page("ui/dist/index.html")
+-- ui_page("http://192.168.1.17:8080")
