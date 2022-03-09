@@ -10,6 +10,7 @@
         <i class="fas fa-search text-secondary"></i>
       </span>
       <input
+        :disabled="!vehicles || vehicles.length <= 0"
         type="text"
         class="form-control"
         placeholder="Keresés..."

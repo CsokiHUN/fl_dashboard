@@ -2,7 +2,9 @@
 
 #### Kompatibilis verzió: ESX Legacy
 
-##### Használat
+#### [Preview](https://streamable.com/9wtxdh 'https://streamable.com/9wtxdh')
+
+### Használat
 
 Megnyitás: Home gomb vagy /dashboard parancs
 
