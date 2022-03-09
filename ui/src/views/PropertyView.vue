@@ -28,6 +28,8 @@
         </tr>
       </thead>
       <tbody>
+        <h5 v-if="!vehicles || vehicles.length <= 0" class="text-light text-center mt-5">Nincs járműved 😢</h5>
+
         <tr v-for="(vehicle, key) in vehicles" :key="key" @click="select(key)" :class="{ active: selected === key }" class="text-center">
           <td class="id">{{ vehicle.plate ?? 'Ismeretlen' }}</td>
           <td class="vehicle-name fw-bold">{{ vehicle.label ?? 'Ismeretlen' }}</td>
@@ -43,7 +45,7 @@
         </tr>
       </tbody>
     </table>
-    <h6 v-if="currentVehicle !== undefined" class="fw-bold">
+    <h6 v-if="vehicles.length >= 0 && currentVehicle !== undefined" class="fw-bold">
       <h5>
         {{ currentVehicle.label }}
       </h5>
@@ -78,9 +80,6 @@
           </span>
         </li>
       </ul>
-
-      <!-- Kilóméteróra állása, Rendszám, Motor, Lámpa, Kézifék, Nitro, AirRide, Neon Motor, Fék, Turbo, ECU, Váltó, Kerék, Súlycsökkentés,
-      Felfüggesztés -->
     </h6>
   </div>
 </template>
@@ -92,14 +91,7 @@
       return {
         selected: 0,
 
-        vehicles: [
-          // {
-          //   plate: 'AAA-001',
-          //   name: 'Lada 2102',
-          //   state: 100,
-          //   fuel: 100,
-          // },
-        ],
+        vehicles: [],
       };
     },
     computed: {

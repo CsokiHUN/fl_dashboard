@@ -2,6 +2,10 @@
 
 #### Kompatibilis verzió: ESX Legacy
 
+##### Használat
+
+Megnyitás: Home gomb vagy /dashboard parancs
+
 ### Exportok
 
 ```lua
