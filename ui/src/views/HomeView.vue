@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h4>Clark Melton</h4>
+    <h4>{{ playerName }}</h4>
 
     <h4 v-if="cards.length <= 0" class="text-center mt-5">Betöltés...</h4>
 
@@ -26,6 +26,7 @@
     data() {
       return {
         cards: [],
+        playerName: '',
       };
     },
     async created() {
@@ -35,8 +36,9 @@
           name: 'cards',
         }),
       });
-      const { cards } = await response.json();
+      const { cards, playerName } = await response.json();
       this.cards = cards;
+      this.playerName = playerName;
     },
   };
 </script>

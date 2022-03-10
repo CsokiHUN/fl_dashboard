@@ -18,7 +18,7 @@ const routes = [
   },
   {
     path: '/premium',
-    name: '<i class="fa-solid fa-credit-card"></i> Támogatás',
+    name: '<i class="fas fa-receipt"></i> Támogatás',
     component: () => import('../views/PremiumView.vue'),
   },
   {

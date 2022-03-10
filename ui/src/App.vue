@@ -119,7 +119,6 @@
     color: lightgray;
   }
 
-  /* TODO: SCROLLBAR!!!! */
   /* width */
   ::-webkit-scrollbar {
     width: 10px;
@@ -127,12 +126,14 @@
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: rgb(35, 35, 35);
+    border-radius: 0.25em;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: rgb(65, 65, 65);
+    border-radius: 0.25em;
   }
 
   /* Handle on hover */

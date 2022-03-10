@@ -9,8 +9,8 @@ Panel = {
 		end,
 
 		cards = function(cb)
-			ESX.TriggerServerCallback("requestPlayerDatas", function(result)
-				cb({ cards = result })
+			ESX.TriggerServerCallback("requestPlayerDatas", function(result, playerName)
+				cb({ cards = result, playerName = playerName })
 			end)
 		end,
 
@@ -158,4 +158,8 @@ CreateThread(function()
 	end
 
 	Panel:init()
+end)
+
+RegisterNetEvent("esx:playerLoaded", function()
+	TriggerServerEvent(GetCurrentResourceName() .. "->playerLoaded")
 end)

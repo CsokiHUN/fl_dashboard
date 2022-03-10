@@ -9,6 +9,7 @@ shared_scripts({ "@es_extended/imports.lua", "shared.lua" })
 client_script("client.lua")
 server_scripts({
 	"@mysql-async/lib/MySQL.lua",
+	"premium.lua",
 	"server.lua",
 })
 

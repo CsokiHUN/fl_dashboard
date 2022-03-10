@@ -10,8 +10,10 @@
         <i class="fas fa-search text-secondary"></i>
       </span>
       <input
+        v-model="search"
         :disabled="!vehicles || vehicles.length <= 0"
         type="text"
+        maxlength="30"
         class="form-control"
         placeholder="Keresés..."
         aria-label="Sizing example input"
@@ -30,8 +32,17 @@
       </thead>
       <tbody>
         <h5 v-if="!vehicles || vehicles.length <= 0" class="text-light text-center mt-5">Nincs járműved 😢</h5>
+        <h5 v-if="search !== '' && filteredVehicles.length <= 0" class="text-light text-center mt-5">
+          Nincs találat a következőre: {{ search }}
+        </h5>
 
-        <tr v-for="(vehicle, key) in vehicles" :key="key" @click="select(key)" :class="{ active: selected === key }" class="text-center">
+        <tr
+          v-for="(vehicle, key) in filteredVehicles"
+          :key="key"
+          @click="select(vehicle.key || key)"
+          :class="{ active: selected === key || selected === vehicle.key }"
+          class="text-center"
+        >
           <td class="id">{{ vehicle.plate ?? 'Ismeretlen' }}</td>
           <td class="vehicle-name fw-bold">{{ vehicle.label ?? 'Ismeretlen' }}</td>
           <td
@@ -47,40 +58,57 @@
       </tbody>
     </table>
     <h6 v-if="vehicles.length >= 0 && currentVehicle !== undefined" class="fw-bold">
-      <h5>
-        {{ currentVehicle.label }}
-      </h5>
-
-      <ul class="current-vehicle">
-        <li>
-          Tárolva:
-          <span :style="{ color: currentVehicle.stored === 1 ? 'green' : 'red' }">{{ currentVehicle.stored === 1 ? 'Igen' : 'Nem' }}</span>
-        </li>
-        <li>Rendszám: {{ currentVehicle.plate }}</li>
-        <li>Szín 1: {{ currentVehicle.vehicle.color1 }} | Szín 2: {{ currentVehicle.vehicle.color2 }}</li>
-        <li>Model: {{ currentVehicle.vehicle.model }} | {{ currentVehicle.name }}</li>
-        <li>
-          Üzemanyag: <span :style="{ color: getColor(currentVehicle.fuel) }">{{ currentVehicle.fuel }}%</span>
-        </li>
-        <li>
-          Motor állapot:
-          <span :style="{ color: getColor(currentVehicle.vehicle.engineHealth / 10) }">
-            {{ Math.floor(currentVehicle.vehicle.engineHealth / 10) }}%
-          </span>
-        </li>
-        <li>
-          Kaszni állapot:
-          <span :style="{ color: getColor(currentVehicle.vehicle.bodyHealth / 10) }">
-            {{ Math.floor(currentVehicle.vehicle.bodyHealth / 10) }}%
-          </span>
-        </li>
-        <li>
-          Tank állapot:
-          <span :style="{ color: getColor(currentVehicle.vehicle.tankHealth / 10) }"
-            >{{ Math.floor(currentVehicle.vehicle.tankHealth / 10) }}%
-          </span>
-        </li>
-      </ul>
+      <div class="d-flex">
+        <div>
+          <h5>
+            {{ currentVehicle.label }}
+          </h5>
+          <ul class="current-vehicle">
+            <li>
+              Tárolva:
+              <span :style="{ color: currentVehicle.stored === 1 ? 'green' : 'red' }">{{
+                currentVehicle.stored === 1 ? 'Igen' : 'Nem'
+              }}</span>
+            </li>
+            <li>Rendszám: {{ currentVehicle.plate }}</li>
+            <li>Szín 1: {{ currentVehicle.vehicle.color1 }} | Szín 2: {{ currentVehicle.vehicle.color2 }}</li>
+            <li>Model: {{ currentVehicle.vehicle.model }} | {{ currentVehicle.name }}</li>
+            <li>
+              Üzemanyag: <span :style="{ color: getColor(currentVehicle.fuel) }">{{ currentVehicle.fuel }}%</span>
+            </li>
+            <li>
+              Motor állapot:
+              <span :style="{ color: getColor(currentVehicle.vehicle.engineHealth / 10) }">
+                {{ Math.floor(currentVehicle.vehicle.engineHealth / 10) }}%
+              </span>
+            </li>
+            <li>
+              Kaszni állapot:
+              <span :style="{ color: getColor(currentVehicle.vehicle.bodyHealth / 10) }">
+                {{ Math.floor(currentVehicle.vehicle.bodyHealth / 10) }}%
+              </span>
+            </li>
+            <li>
+              Tank állapot:
+              <span :style="{ color: getColor(currentVehicle.vehicle.tankHealth / 10) }"
+                >{{ Math.floor(currentVehicle.vehicle.tankHealth / 10) }}%
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div class="ms-3 mt-4">
+          <h6>Teljesítmény Tuningok</h6>
+          <ul>
+            <li v-for="(label, name) in performanceMods" :key="name" v-html="getMod(name)"></li>
+          </ul>
+        </div>
+        <div class="optical-tunings ms-3 mt-4">
+          <h6>Optikai Tuningok</h6>
+          <ul>
+            <li v-for="(label, name) in opticalMods" :key="name" v-html="getMod(name)"></li>
+          </ul>
+        </div>
+      </div>
     </h6>
   </div>
 </template>
@@ -93,9 +121,42 @@
         selected: 0,
 
         vehicles: [],
+        search: '',
+
+        performanceMods: {
+          modArmor: 'Páncél',
+          modBrakes: 'Fékek',
+          modEngine: 'Motor',
+          modSuspension: 'Felfüggesztés',
+          modTransmission: 'Váltó',
+          modTurbo: 'Turbó',
+        },
+
+        opticalMods: {
+          modAerials: 'Antenna',
+          modAirFilter: 'Levegőszűrő',
+          modArchCover: 'Arch Cover',
+          modExhaust: 'Kipufogó',
+          modFrontBumper: 'Első lökhárító',
+          modGrille: 'Rács',
+          modHood: 'Motorháztető',
+          modFender: 'Bal küszöb',
+          modRightFender: 'Jobb küszöb',
+        },
       };
     },
     computed: {
+      filteredVehicles() {
+        if (this.search === '') return this.vehicles;
+
+        return this.vehicles.filter((vehicle, key) => {
+          vehicle.key = key;
+          return (
+            vehicle.plate.toLowerCase().includes(this.search.toLowerCase()) ||
+            vehicle.label.toLowerCase().includes(this.search.toLowerCase())
+          );
+        });
+      },
       currentVehicle() {
         return this.vehicles[this.selected];
       },
@@ -113,6 +174,15 @@
         if (value > 25 && value <= 75) return 'orange';
 
         return 'green';
+      },
+
+      getMod(name) {
+        let value = this.currentVehicle.vehicle[name];
+        if (!value) value = `<span class="text-danger">Nincs</span>`;
+        else value = value <= 0 ? `<span class="text-danger">Nincs</span>` : `<span class="text-primary">${value}</span>`;
+
+        const label = this.performanceMods[name] ?? this.opticalMods[name] ?? 'Ismeretlen';
+        return `${label}: ${value}`;
       },
     },
     async created() {
@@ -177,5 +247,11 @@
 
   .current-vehicle {
     font-size: 0.9em;
+  }
+
+  .optical-tunings {
+    padding-right: 0.5em;
+    max-height: 10em;
+    overflow-y: auto;
   }
 </style>

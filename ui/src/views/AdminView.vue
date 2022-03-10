@@ -11,6 +11,7 @@
           <input
             v-model="search"
             type="text"
+            maxlength="30"
             class="form-control"
             placeholder="Keresés..."
             aria-label="Sizing example input"

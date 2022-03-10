@@ -1,13 +1,66 @@
-CreateThread(function()
-	for _, player in pairs(GetPlayers()) do
-		print(player, " - ", GetPlayerName(player))
+function createSQLColumn(name)
+	local exists = MySQL.Sync.fetchScalar("SHOW COLUMNS FROM `users` LIKE '" .. name .. "'")
+	if not exists then
+		MySQL.Async.execute([[
+			ALTER TABLE `users`
+			ADD COLUMN `]] .. name .. [[` INT(11) NULL DEFAULT '0';
+		]])
+	end
+end
 
-		if not Player(player).state.joinTime then
+CreateThread(function()
+	createSQLColumn("playedTime")
+	createSQLColumn("premiumPoints")
+
+	for _, player in pairs(GetPlayers()) do
+		local sb = Player(player).state
+
+		if not sb.joinTime then
 			Player(player).state.joinTime = os.time()
 		end
 
-		print(GetPlayerName(player), Player(player).state.joinTime)
+		if not sb.playedTime then
+			loadPlayerPlayedTime(player)
+		end
+
+		loadPlayerPP(player)
 	end
+end)
+
+RegisterNetEvent(GetCurrentResourceName() .. "->playerLoaded", function()
+	Player(source).state.joinTime = os.time()
+	loadPlayerPlayedTime(source)
+end)
+
+function loadPlayerPlayedTime(player)
+	local xPlayer = ESX.GetPlayerFromId(player)
+	if not xPlayer then
+		return
+	end
+
+	local playedTime = MySQL.Sync.fetchScalar(
+		"SELECT playedTime FROM users WHERE identifier = ?",
+		{ xPlayer.identifier }
+	)
+	Player(player).state.playedTime = playedTime
+end
+
+function savePlayedTime(player)
+	local xPlayer = ESX.GetPlayerFromId(player)
+	if not xPlayer then
+		return
+	end
+
+	local sb = Player(player).state
+	local oldTime = sb.playedTime or 0
+	local joinTime = sb.joinTime or os.time()
+	local newTime = oldTime + (os.time() - joinTime)
+
+	MySQL.Async.execute("UPDATE users SET playedTime = ? WHERE identifier = ?", { newTime, xPlayer.identifier })
+end
+
+AddEventHandler("playerDropped", function()
+	savePlayedTime(source)
 end)
 
 ESX.RegisterServerCallback("requestServerAdmins", function(source, cb)
@@ -48,6 +101,13 @@ ESX.RegisterServerCallback("requestPlayerDatas", function(source, cb)
 		)
 	end
 
+	local currentPP = getPlayerPP(source)
+	table.insert(result, {
+		title = "Prémium Pont",
+		value = currentPP .. "PP",
+		color = currentPP >= 0 and "green" or "red",
+	})
+
 	local vehicleCount = MySQL.Sync.fetchScalar(
 		"SELECT COUNT(*) FROM owned_vehicles WHERE owner = ?",
 		{ xPlayer.identifier }
@@ -65,12 +125,15 @@ ESX.RegisterServerCallback("requestPlayerDatas", function(source, cb)
 
 	table.insert(result, { title = "Identifier", value = xPlayer.identifier, color = "red", blur = true })
 
-	table.insert(result, { title = "Játszott idő", value = "TODO", color = "red" })
+	local sb = Player(source).state
+	local joinTime = sb.joinTime or os.time()
+	local currentSessionTime = os.time() - joinTime
+	local playedTime = (sb.playedTime or 0) + currentSessionTime
 
-	local joinTime = Player(source).state.joinTime or os.time()
-	table.insert(result, { title = "Online Idő", value = secondsToClock(os.time() - joinTime), color = "yellow" })
+	table.insert(result, { title = "Játszott idő", value = secondsToClock(playedTime), color = "yellow" })
+	table.insert(result, { title = "Online Idő", value = secondsToClock(currentSessionTime), color = "yellow" })
 
-	cb(result)
+	cb(result, xPlayer.getName())
 end)
 
 ESX.RegisterServerCallback("requestPlayerVehicles", function(source, cb)
