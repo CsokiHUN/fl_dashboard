@@ -10,20 +10,49 @@ Megnyitás: Home gomb vagy /dashboard parancs
 
 ### Exportok
 
+#### Client
+
+##### saveSettings()
+
+- Beállítások mentése
+
 ```lua
--- saveSettings() -> Beállítások mentése
 exports.fl_dashboard:saveSettings()
 ```
 
+##### isSettingEnabled(name)
+
+- Beállítás státusz lekérése
+- return -> boolean
+- alap beállítások: hud, radar (bővítés: client.lua -> Settings tábla.)
+
 ```lua
--- isSettingEnabled(name: string) -> Beállítás státusz lekérése
---[[
-alap beállítások: hud, radar (bővítés: client.lua -> Settings tábla.)
-]]
 exports.fl_dashboard:isSettingEnabled(name)
 ```
 
+#### Server
+
+##### getPlayerPP(player)
+
+- játékos prémium pontjainak lekérése
+- return -> number
+
+```lua
+exports.fl_dashboard:getPlayerPP(player)
+```
+
+##### setPlayerPP(player)
+
+- játékos prémium pontjainak beállítása
+- return boolean
+
+```lua
+exports.fl_dashboard:setPlayerPP(player)
+```
+
 ### Eventek
+
+#### Client
 
 ```lua
 --Ez az event akkor fut le mikor változtatod egy beállítás értékét.
