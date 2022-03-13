@@ -69,7 +69,7 @@ ESX.RegisterServerCallback("requestServerAdmins", function(source, cb)
 	for _, player in pairs(GetPlayers()) do
 		local xPlayer = ESX.GetPlayerFromId(player)
 
-		if xPlayer and xPlayer.getGroup() ~= "user" then
+		if xPlayer and ADMIN_GROUPS[xPlayer.getGroup()] then
 			table.insert(result, {
 				id = player,
 				group = xPlayer.getGroup(),
@@ -146,3 +146,85 @@ ESX.RegisterServerCallback("requestPlayerVehicles", function(source, cb)
 		cb(result)
 	end)
 end)
+
+ESX.RegisterServerCallback("requestPremiumStuff", function(source, cb)
+	local items = {}
+
+	for _, item in pairs(PREMIUM.items) do
+		item.label = ESX.GetItemLabel(item.name)
+
+		if item.label then
+			item.img = getItemImagePath(item.name)
+			table.insert(items, item)
+		end
+	end
+
+	cb(getPlayerPP(source), items)
+end)
+
+ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, label)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local currentPP = getPlayerPP(source)
+
+	local item = getItemData(item, typ)
+	if not item or not item.price then
+		return cb(currentPP)
+	end
+
+	if currentPP <= item.price then
+		return chatbox("Nincs elég prémium pontod!", { 255, 0, 0 }, source)
+	end
+
+	if typ == "items" then
+		if not xPlayer.canCarryItem(item.name, 1) then
+			chatbox("Tárgy nemfér el nálad!", { 255, 0, 0 }, source)
+			return cb(currentPP)
+		end
+
+		xPlayer.addInventoryItem(item.name, 1)
+		takePlayerPP(source, item.price)
+		chatbox("Sikeres vásároltál egy " .. ESX.GetItemLabel(item.name) .. " tárgyat", { 0, 255, 0 }, source)
+	elseif typ == "vehicles" then
+		takePlayerPP(source, item.price)
+
+		local plate = generatePlate()
+
+		MySQL.Async.insert("INSERT INTO owned_vehicles SET owner = ?, plate = ?, vehicle = ?", {
+			xPlayer.identifier,
+			plate,
+			json.encode({ model = GetHashKey(item.name), plate = plate }),
+		})
+
+		chatbox("Sikeres jármű vásárlás. Model: " .. label, { 0, 255, 0 }, source)
+
+		return cb(getPlayerPP(source), { item = item, plate = plate })
+	elseif typ == "money" then
+		takePlayerPP(source, item.price)
+		xPlayer.addMoney(item.name)
+
+		chatbox("Sikeres vásároltál " .. item.name .. "$-t", { 0, 255, 0 }, source)
+	end
+
+	cb(getPlayerPP(source), spawnVehicle)
+end)
+
+function generatePlate()
+	local plate = ""
+
+	local str = "abcdefghijklmnopqrstuvwxyz"
+	for index = 1, 3 do
+		plate = plate .. string.char(str:byte(math.random(1, #str)))
+	end
+
+	plate = plate:upper() .. " "
+
+	for index = 1, 3 do
+		plate = plate .. math.random(0, 9)
+	end
+
+	if MySQL.Sync.fetchScalar("SELECT plate FROM owned_vehicles WHERE plate = ?", { plate }) then
+		return generatePlate()
+	end
+
+	return plate
+end

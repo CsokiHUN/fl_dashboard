@@ -36,18 +36,31 @@ function setPlayerPP(player, value)
 end
 exports("setPlayerPP", setPlayerPP)
 
-RegisterCommand("setpp", function(player, args, cmd)
+function takePlayerPP(player, value)
+	local currentPP = getPlayerPP(player)
+	if currentPP < value then
+		return false
+	end
+
+	currentPP = currentPP - value
+	setPlayerPP(player, currentPP)
+
+	return true
+end
+exports("takePlayerPP", takePlayerPP)
+
+RegisterCommand("setpp", function(player, args)
 	local xPlayer = ESX.GetPlayerFromId(player)
 
 	if not ADMIN_GROUPS[xPlayer.getGroup()] then
 		return chatbox("Nincs jogod ehhez!", { 255, 0, 0 }, player)
 	end
 
-	if #args < 2 or not tonumber(args[1]) or not tonumber(args[2]) then
-		return chatbox("/" .. cmd .. " [ID] [PP]", { 255, 150, 0 }, player)
+	if #args < 2 or not tonumber(args[2]) then
+		return chatbox("/setpp [ID] [PP]", { 255, 150, 0 }, player)
 	end
 
-	local xTarget = ESX.GetPlayerFromId(args[1])
+	local xTarget = ESX.GetPlayerFromId(args[1] == "me" and player or args[1])
 	if not xTarget then
 		return chatbox("Játékos nem található!", { 255, 0, 0 }, player)
 	end
@@ -63,4 +76,55 @@ RegisterCommand("setpp", function(player, args, cmd)
 		{ 0, 255, 0 },
 		xTarget.source
 	)
+end)
+
+RegisterCommand("givepp", function(player, args)
+	local xPlayer = ESX.GetPlayerFromId(player)
+
+	if not ADMIN_GROUPS[xPlayer.getGroup()] then
+		return chatbox("Nincs jogod ehhez!", { 255, 0, 0 }, player)
+	end
+
+	if #args < 2 or not tonumber(args[2]) then
+		return chatbox("/givepp [ID] [PP]", { 255, 150, 0 }, player)
+	end
+
+	local xTarget = ESX.GetPlayerFromId(args[1] == "me" and player or args[1])
+	if not xTarget then
+		return chatbox("Játékos nem található!", { 255, 0, 0 }, player)
+	end
+
+	local value = math.floor(tonumber(args[2]))
+	if value <= 0 then
+		return chatbox("Ne má", { 255, 0, 0 }, player)
+	end
+	setPlayerPP(xTarget.source, getPlayerPP(xTarget.source) + value)
+
+	chatbox(GetPlayerName(player) .. " adott prémium pontot. Mennyiség: " .. value, { 0, 255, 0 }, xTarget.source)
+end)
+
+RegisterCommand("takepp", function(player, args)
+	local xPlayer = ESX.GetPlayerFromId(player)
+
+	if not ADMIN_GROUPS[xPlayer.getGroup()] then
+		return chatbox("Nincs jogod ehhez!", { 255, 0, 0 }, player)
+	end
+
+	if #args < 2 or not tonumber(args[2]) then
+		return chatbox("/takepp [ID] [PP]", { 255, 150, 0 }, player)
+	end
+
+	local xTarget = ESX.GetPlayerFromId(args[1] == "me" and player or args[1])
+	if not xTarget then
+		return chatbox("Játékos nem található!", { 255, 0, 0 }, player)
+	end
+
+	local value = math.floor(tonumber(args[2]))
+	if value <= 0 then
+		return chatbox("Ne má", { 255, 0, 0 }, player)
+	end
+	if not takePlayerPP(xTarget.source, value) then
+		return chatbox("Játékosnak nem lehet negatívba a prémiumja", { 255, 0, 0 }, player)
+	end
+	chatbox(GetPlayerName(player) .. " levont prémium pontot. Mennyiség: " .. value, { 0, 255, 0 }, xTarget.source)
 end)

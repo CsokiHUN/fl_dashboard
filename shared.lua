@@ -4,6 +4,55 @@ ADMIN_GROUPS = {
 	moderator = true,
 }
 
+PREMIUM = {
+	items = {
+		{
+			name = "bread",
+			price = 100,
+		},
+		{
+			name = "beer",
+			price = 100,
+		},
+		{
+			name = "stone",
+			price = 1000,
+		},
+	},
+	vehicles = {
+		{
+			name = "sultan",
+			price = 100,
+		},
+		{
+			name = "sultanrs",
+			price = 100,
+		},
+		{
+			name = "enduro",
+			price = 10000,
+		},
+	},
+	money = {
+		{ price = 1000, name = 1000, img = "http://pluspng.com/img-png/money-png--3179.png" },
+		{ price = 500, name = 10000, img = "http://pluspng.com/img-png/money-png--3179.png" },
+	},
+}
+
+function getItemImagePath(itemName)
+	return "nui://esx_inventoryhud/html/img/items/" .. itemName .. ".png"
+end
+
+function getItemData(Item, typ)
+	for _, item in pairs(PREMIUM[typ]) do
+		if item.name == Item.name and item.price then
+			return item
+		end
+	end
+
+	return false
+end
+
 function secondsToClock(seconds)
 	local seconds = tonumber(seconds)
 	if not seconds then

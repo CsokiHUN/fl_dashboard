@@ -8,6 +8,12 @@
 
 Megnyitás: Home gomb vagy /dashboard parancs
 
+### Parancsok
+
+- /setpp -> Játékos prémium pontjainak beállítása
+- /givepp -> Játékos prémium pontjaihoz hozzáadás
+- /takepp -> Játékos prémium pontjaiból levonás
+
 ### Exportok
 
 #### Client
@@ -48,6 +54,15 @@ exports.fl_dashboard:getPlayerPP(player)
 
 ```lua
 exports.fl_dashboard:setPlayerPP(player)
+```
+
+##### takePlayerPP(player)
+
+- játékos prémium pontjaiból levonás
+- return boolean
+
+```lua
+exports.fl_dashboard:takePlayerPP(player, value)
 ```
 
 ### Eventek

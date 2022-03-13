@@ -81,6 +81,58 @@ Panel = {
 				loadSettings = settings,
 			})
 		end)
+
+		CreateThread(function()
+			local money = {}
+			local vehicles = {}
+
+			for _, item in pairs(PREMIUM.money) do
+				item.label = item.name .. "$"
+				table.insert(money, item)
+			end
+			PREMIUM.money = money
+
+			for _, vehicle in pairs(PREMIUM.vehicles) do
+				vehicle.label = GetLabelText(vehicle.name) or "Ismeretlen"
+				table.insert(vehicles, vehicle)
+			end
+			PREMIUM.vehicles = vehicles
+		end)
+
+		-- Premium shits
+		RegisterNUICallback("getPremiumStuff", function(data, cb)
+			ESX.TriggerServerCallback("requestPremiumStuff", function(currentPP, items)
+				cb({
+					currentPP = currentPP,
+					items = items,
+					vehicles = PREMIUM.vehicles,
+					money = PREMIUM.money,
+				})
+			end)
+		end)
+
+		RegisterNUICallback("buyPremiumItem", function(data, cb)
+			if not data.item then
+				return cb({})
+			end
+
+			ESX.TriggerServerCallback("buyPremiumItem", function(currentPP, vehicleData)
+				if vehicleData and vehicleData.item and vehicleData.plate then
+					local playerPed = PlayerPedId()
+
+					ESX.Game.SpawnVehicle(
+						vehicleData.item.name,
+						GetEntityCoords(playerPed) + vector3(0, 1.5, 0),
+						GetEntityHeading(playerPed),
+						function(vehicle)
+							ESX.Game.SetVehicleProperties(vehicle, { plate = vehicleData.plate })
+						end
+					)
+				end
+
+				cb({ currentPP = currentPP })
+			end, data.item, data.typ, data.item.label)
+		end)
 	end,
 
 	toggle = function(self)
