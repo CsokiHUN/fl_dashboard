@@ -4,6 +4,8 @@
 
 #### [Preview](https://streamable.com/9wtxdh 'https://streamable.com/9wtxdh')
 
+#### [Preview](https://streamable.com/bbpc0f 'https://streamable.com/bbpc0f')
+
 ### Használat
 
 Megnyitás: Home gomb vagy /dashboard parancs
