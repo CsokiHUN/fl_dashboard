@@ -6,7 +6,7 @@ function loadPlayerPP(player)
 		return 0
 	end
 
-	local value = MySQL.Sync.fetchScalar("SELECT premiumPoints FROM users WHERE identifier = ?", { xPlayer.identifier })
+	local value = MySQL.scalar.await("SELECT premiumPoints FROM users WHERE identifier = ?", { xPlayer.identifier })
 
 	playerPP[player] = value
 
@@ -30,7 +30,7 @@ function setPlayerPP(player, value)
 
 	playerPP[player] = value
 
-	MySQL.Async.execute("UPDATE users SET premiumPoints = ? WHERE identifier = ?", { value, xPlayer.identifier })
+	MySQL.query("UPDATE users SET premiumPoints = ? WHERE identifier = ?", { value, xPlayer.identifier })
 
 	return true
 end

@@ -3,12 +3,12 @@ game("gta5")
 author("Csoki")
 
 dependency("es_extended")
-dependency("mysql-async")
+dependency("oxmysql")
 
 shared_scripts({ "@es_extended/imports.lua", "shared.lua" })
 client_script("client.lua")
 server_scripts({
-	"@mysql-async/lib/MySQL.lua",
+	"@oxmysql/lib/MySQL.lua",
 	"premium.lua",
 	"server.lua",
 })

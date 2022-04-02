@@ -1,16 +1,24 @@
 function createSQLColumn(name)
-	local exists = MySQL.Sync.fetchScalar("SHOW COLUMNS FROM `users` LIKE '" .. name .. "'")
-	if not exists then
-		MySQL.Async.execute([[
+	local p = promise.new()
+
+	local exists = MySQL.scalar.await("SHOW COLUMNS FROM `users` LIKE '" .. name .. "'")
+	if exists then
+		return p:resolve(false)
+	end
+
+	MySQL.query([[
 			ALTER TABLE `users`
 			ADD COLUMN `]] .. name .. [[` INT(11) NULL DEFAULT '0';
-		]])
-	end
+		]], function()
+		p:resolve(true)
+	end)
+
+	return p
 end
 
 CreateThread(function()
-	createSQLColumn("playedTime")
-	createSQLColumn("premiumPoints")
+	Citizen.Await(createSQLColumn("playedTime"))
+	Citizen.Await(createSQLColumn("premiumPoints"))
 
 	for _, player in pairs(GetPlayers()) do
 		local sb = Player(player).state
@@ -38,10 +46,7 @@ function loadPlayerPlayedTime(player)
 		return
 	end
 
-	local playedTime = MySQL.Sync.fetchScalar(
-		"SELECT playedTime FROM users WHERE identifier = ?",
-		{ xPlayer.identifier }
-	)
+	local playedTime = MySQL.scalar.await("SELECT playedTime FROM users WHERE identifier = ?", { xPlayer.identifier })
 	Player(player).state.playedTime = playedTime
 end
 
@@ -56,7 +61,7 @@ function savePlayedTime(player)
 	local joinTime = sb.joinTime or os.time()
 	local newTime = oldTime + (os.time() - joinTime)
 
-	MySQL.Async.execute("UPDATE users SET playedTime = ? WHERE identifier = ?", { newTime, xPlayer.identifier })
+	MySQL.Async.update("UPDATE users SET playedTime = ? WHERE identifier = ?", { newTime, xPlayer.identifier })
 end
 
 AddEventHandler("playerDropped", function()
@@ -142,7 +147,7 @@ ESX.RegisterServerCallback("requestPlayerVehicles", function(source, cb)
 		return cb({})
 	end
 
-	MySQL.Async.fetchAll("SELECT * FROM owned_vehicles WHERE owner = ?", { xPlayer.identifier }, function(result)
+	MySQL.query("SELECT * FROM owned_vehicles WHERE owner = ?", { xPlayer.identifier }, function(result)
 		cb(result)
 	end)
 end)
@@ -189,7 +194,7 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 
 		local plate = generatePlate()
 
-		MySQL.Async.insert("INSERT INTO owned_vehicles SET owner = ?, plate = ?, vehicle = ?", {
+		MySQL.insert("INSERT INTO owned_vehicles SET owner = ?, plate = ?, vehicle = ?", {
 			xPlayer.identifier,
 			plate,
 			json.encode({ model = GetHashKey(item.name), plate = plate }),
@@ -222,7 +227,7 @@ function generatePlate()
 		plate = plate .. math.random(0, 9)
 	end
 
-	if MySQL.Sync.fetchScalar("SELECT plate FROM owned_vehicles WHERE plate = ?", { plate }) then
+	if MySQL.scalar.await("SELECT plate FROM owned_vehicles WHERE plate = ?", { plate }) then
 		return generatePlate()
 	end
 
