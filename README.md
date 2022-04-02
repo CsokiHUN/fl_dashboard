@@ -10,6 +10,8 @@
 
 #### [Preview](https://streamable.com/bbpc0f 'https://streamable.com/bbpc0f')
 
+##### Csatlakozz te is a FiveM Land discordjához, hogy további finomságokat találj! Discord: https://discord.gg/Zdaqj5EM5Z
+
 ### Használat
 
 Megnyitás: Home gomb vagy /dashboard parancs
