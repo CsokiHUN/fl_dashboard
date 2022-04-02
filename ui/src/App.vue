@@ -30,7 +30,6 @@
     },
     methods: {
       close() {
-        console.log('bezárás');
         fetch(`https://${GetParentResourceName()}/close`);
       },
     },
