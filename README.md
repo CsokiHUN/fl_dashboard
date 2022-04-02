@@ -1,5 +1,9 @@
 ### Dashboard ESX Szerverekhez.
 
+#### Szükséges scriptek
+
+##### - oxmysql
+
 #### Kompatibilis verzió: ESX Legacy
 
 #### [Preview](https://streamable.com/9wtxdh 'https://streamable.com/9wtxdh')
