@@ -61,7 +61,7 @@ function savePlayedTime(player)
 	local joinTime = sb.joinTime or os.time()
 	local newTime = oldTime + (os.time() - joinTime)
 
-	MySQL.Async.update("UPDATE users SET playedTime = ? WHERE identifier = ?", { newTime, xPlayer.identifier })
+	exports.oxmysql:update("UPDATE users SET playedTime = ? WHERE identifier = ?", { newTime, xPlayer.identifier })
 end
 
 AddEventHandler("playerDropped", function()
