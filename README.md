@@ -2,7 +2,11 @@
 
 #### Szükséges scriptek
 
-##### - oxmysql
+##### - [oxmysql](https://github.com/overextended/oxmysql)
+
+#### Opcionális scriptek
+
+##### - [fl_nametag](https://github.com/fivemland/fl_nametag) - Beállításokban kapcsolható a saját név megjelenítése
 
 #### Kompatibilis verzió: ESX Legacy
 
