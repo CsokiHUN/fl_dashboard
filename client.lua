@@ -1,3 +1,33 @@
+Settings = {
+	radar = {
+		label = "Radar megjelenítése",
+		state = true,
+		defaultValue = true,
+		callback = function(value)
+			DisplayRadar(value)
+		end,
+	},
+	hud = {
+		label = "HUD megjelenítése",
+		state = true,
+		defaultValue = true,
+		callback = function(value)
+			ESX.UI.HUD.SetDisplay(value and 1 or 0)
+		end,
+	},
+}
+
+if GetResourceState('fl_nametag') == "started" then 
+	Settings.myname = {
+		label = "Saját név megjelenítése",
+		state = exports.fl_nametag:getMyNameVisible(),
+		defaultValue = true,
+		callback = function(value)
+			exports.fl_nametag:setMyNameVisible(value)
+		end
+	}
+end
+
 Panel = {
 	visible = false,
 
@@ -157,25 +187,6 @@ Panel = {
 	end,
 }
 Panel.__index = Panel
-
-Settings = {
-	radar = {
-		label = "Radar megjelenítése",
-		state = true,
-		defaultValue = true,
-		callback = function(value)
-			DisplayRadar(value)
-		end,
-	},
-	hud = {
-		label = "HUD megjelenítése",
-		state = true,
-		defaultValue = true,
-		callback = function(value)
-			ESX.UI.HUD.SetDisplay(value and 1 or 0)
-		end,
-	},
-}
 
 function saveSettings()
 	local settings = {}
