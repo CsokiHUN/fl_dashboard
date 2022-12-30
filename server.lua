@@ -176,8 +176,13 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 		return cb(currentPP)
 	end
 
-	if currentPP <= item.price then
+	if currentPP < item.price then
 		return chatbox("Nincs elég prémium pontod!", { 255, 0, 0 }, source)
+	end
+
+	local itemLabel = ESX.GetItemLabel(item.name)
+	if not itemLabel then
+		return chatbox(("Érvénytelen tárgy! %s"):format(item.name), {255, 0, 0}, source)
 	end
 
 	if typ == "items" then
@@ -188,7 +193,7 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 
 		xPlayer.addInventoryItem(item.name, 1)
 		takePlayerPP(source, item.price)
-		chatbox("Sikeres vásároltál egy " .. ESX.GetItemLabel(item.name) .. " tárgyat", { 0, 255, 0 }, source)
+		chatbox("Sikeres vásároltál egy " .. itemLabel .. " tárgyat", { 0, 255, 0 }, source)
 	elseif typ == "vehicles" then
 		takePlayerPP(source, item.price)
 
