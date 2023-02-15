@@ -89,9 +89,9 @@ Panel = {
 			self:request(data.name, cb)
 		end)
 
-		RegisterNUICallback("updateSetting", function(data)
+		RegisterNUICallback("updateSetting", function(data, cb)
 			if not Settings[data.name] then
-				return
+				return cb('ok')
 			end
 
 			Settings[data.name].state = data.checked
@@ -100,6 +100,7 @@ Panel = {
 			if not data.storeLoad then
 				TriggerEvent("dashboard:settingChanged", data.name, data.checked)
 			end
+			cb('ok')
 		end)
 
 		CreateThread(function()
@@ -132,7 +133,7 @@ Panel = {
 		end)
 
 		-- Premium shits
-		RegisterNUICallback("getPremiumStuff", function(data, cb)
+		RegisterNUICallback("getPremiumStuff", function(_, cb)
 			ESX.TriggerServerCallback("requestPremiumStuff", function(currentPP, items)
 				cb({
 					currentPP = currentPP,
@@ -167,7 +168,7 @@ Panel = {
 		end)
 	end,
 
-	toggle = function(self)
+	toggle = function(self, _, cb)
 		self.visible = not self.visible
 
 		SendNUIMessage({
@@ -177,6 +178,10 @@ Panel = {
 
 		if not self.visible then
 			saveSettings()
+		end
+
+		if type(cb) == "function" then
+			cb('ok')
 		end
 	end,
 
