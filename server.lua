@@ -197,7 +197,7 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 	elseif typ == "vehicles" then
 		takePlayerPP(source, item.price)
 
-		local plate = generatePlate()
+		local plate = GeneratePlate()
 
 		MySQL.insert("INSERT INTO owned_vehicles SET owner = ?, plate = ?, vehicle = ?", {
 			xPlayer.identifier,
@@ -215,10 +215,10 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 		chatbox("Sikeres vásároltál " .. item.name .. "$-t", { 0, 255, 0 }, source)
 	end
 
-	cb(getPlayerPP(source), spawnVehicle)
+	cb(getPlayerPP(source))
 end)
 
-function generatePlate()
+function GeneratePlate()
 	local plate = ""
 
 	local str = "abcdefghijklmnopqrstuvwxyz"
@@ -233,7 +233,7 @@ function generatePlate()
 	end
 
 	if MySQL.scalar.await("SELECT plate FROM owned_vehicles WHERE plate = ?", { plate }) then
-		return generatePlate()
+		return GeneratePlate()
 	end
 
 	return plate
