@@ -12,7 +12,9 @@ Settings = {
 		state = true,
 		defaultValue = true,
 		callback = function(value)
-			ESX.UI.HUD.SetDisplay(value and 1 or 0)
+			if ESX.UI and ESX.UI.HUD then
+				ESX.UI.HUD.SetDisplay(value and 1 or 0)
+			end
 		end,
 	},
 }
