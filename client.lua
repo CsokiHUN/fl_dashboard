@@ -166,6 +166,8 @@ Panel = {
 						GetEntityHeading(playerPed),
 						function(vehicle)
 							ESX.Game.SetVehicleProperties(vehicle, { plate = vehicleData.plate })
+
+							SetPedIntoVehicle(PlayerPedId(), vehicle, -1)
 						end
 					)
 				end
