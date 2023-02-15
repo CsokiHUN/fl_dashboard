@@ -73,8 +73,15 @@ Panel = {
 	},
 
 	init = function(self)
+		local lastOpen = GetGameTimer()
+
 		RegisterCommand("dashboard", function()
+			local currentTime = GetGameTimer()
+			if lastOpen + 500 > currentTime then
+				return
+			end
 			self:toggle()
+			lastOpen = currentTime
 		end)
 		CreateThread(function()
 			Wait(1)
