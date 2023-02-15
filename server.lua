@@ -180,12 +180,12 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 		return chatbox("Nincs elég prémium pontod!", { 255, 0, 0 }, source)
 	end
 
-	local itemLabel = ESX.GetItemLabel(item.name)
-	if not itemLabel then
-		return chatbox(("Érvénytelen tárgy! %s"):format(item.name), {255, 0, 0}, source)
-	end
-
 	if typ == "items" then
+		local itemLabel = ESX.GetItemLabel(item.name)
+		if not itemLabel then
+			return chatbox(("Érvénytelen tárgy! %s"):format(item.name), {255, 0, 0}, source)
+		end
+
 		if not xPlayer.canCarryItem(item.name, 1) then
 			chatbox("Tárgy nemfér el nálad!", { 255, 0, 0 }, source)
 			return cb(currentPP)
@@ -202,7 +202,7 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 		MySQL.insert("INSERT INTO owned_vehicles SET owner = ?, plate = ?, vehicle = ?", {
 			xPlayer.identifier,
 			plate,
-			json.encode({ model = GetHashKey(item.name), plate = plate }),
+			json.encode({ model = GetHashKey(tostring(item.name)), plate = plate }),
 		})
 
 		chatbox("Sikeres jármű vásárlás. Model: " .. label, { 0, 255, 0 }, source)
