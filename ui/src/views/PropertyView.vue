@@ -58,55 +58,59 @@
       </tbody>
     </table>
     <h6 v-if="vehicles.length >= 0 && currentVehicle !== undefined" class="fw-bold">
-      <div class="d-flex">
-        <div>
-          <h5>
-            {{ currentVehicle.label }}
-          </h5>
-          <ul class="current-vehicle">
-            <li>
-              Tárolva:
-              <span :style="{ color: currentVehicle.stored === 1 ? 'green' : 'red' }">{{
-                currentVehicle.stored === 1 ? 'Igen' : 'Nem'
-              }}</span>
-            </li>
-            <li>Rendszám: {{ currentVehicle.plate }}</li>
-            <li>Szín 1: {{ currentVehicle.vehicle.color1 }} | Szín 2: {{ currentVehicle.vehicle.color2 }}</li>
-            <li>Model: {{ currentVehicle.vehicle.model }} | {{ currentVehicle.name }}</li>
-            <li>
-              Üzemanyag: <span :style="{ color: getColor(currentVehicle.fuel) }">{{ currentVehicle.fuel }}%</span>
-            </li>
-            <li>
-              Motor állapot:
-              <span :style="{ color: getColor(currentVehicle.vehicle.engineHealth / 10) }">
-                {{ Math.floor(currentVehicle.vehicle.engineHealth / 10) }}%
-              </span>
-            </li>
-            <li>
-              Kaszni állapot:
-              <span :style="{ color: getColor(currentVehicle.vehicle.bodyHealth / 10) }">
-                {{ Math.floor(currentVehicle.vehicle.bodyHealth / 10) }}%
-              </span>
-            </li>
-            <li>
-              Tank állapot:
-              <span :style="{ color: getColor(currentVehicle.vehicle.tankHealth / 10) }"
-                >{{ Math.floor(currentVehicle.vehicle.tankHealth / 10) }}%
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div class="ms-3 mt-4">
-          <h6>Teljesítmény Tuningok</h6>
-          <ul>
-            <li v-for="(label, name) in performanceMods" :key="name" v-html="getMod(name)"></li>
-          </ul>
-        </div>
-        <div class="optical-tunings ms-3 mt-4">
-          <h6>Optikai Tuningok</h6>
-          <ul>
-            <li v-for="(label, name) in opticalMods" :key="name" v-html="getMod(name)"></li>
-          </ul>
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <h5>
+              {{ currentVehicle.label }}
+            </h5>
+            <ul class="current-vehicle">
+              <li>
+                Tárolva:
+                <span :style="{ color: currentVehicle.stored === 1 ? 'green' : 'red' }">{{
+                  currentVehicle.stored === 1 ? 'Igen' : 'Nem'
+                }}</span>
+              </li>
+              <li>Rendszám: {{ currentVehicle.plate }}</li>
+              <li v-if="currentVehicle?.vehicle?.color1 || currentVehicle?.vehicle?.color2">
+                Szín 1: {{ currentVehicle.vehicle.color1 }} | Szín 2: {{ currentVehicle.vehicle.color2 }}
+              </li>
+              <li>Model: {{ currentVehicle.name }}</li>
+              <li>
+                Üzemanyag: <span :style="{ color: getColor(currentVehicle.fuel) }">{{ currentVehicle.fuel }}%</span>
+              </li>
+              <li>
+                Motor állapot:
+                <span :style="{ color: getColor(currentVehicle.vehicle.engineHealth / 10) }">
+                  {{ Math.floor((currentVehicle?.vehicle?.engineHealth ?? 0) / 10) }}%
+                </span>
+              </li>
+              <li>
+                Kaszni állapot:
+                <span :style="{ color: getColor(currentVehicle.vehicle.bodyHealth / 10) }">
+                  {{ Math.floor((currentVehicle?.vehicle?.bodyHealth ?? 0) / 10) }}%
+                </span>
+              </li>
+              <li>
+                Tank állapot:
+                <span :style="{ color: getColor(currentVehicle.vehicle.tankHealth / 10) }"
+                  >{{ Math.floor((currentVehicle?.vehicle?.tankHealth ?? 0) / 10) }}%
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="col mt-4">
+            <h6>Teljesítmény Tuningok</h6>
+            <ul>
+              <li v-for="(label, name) in performanceMods" :key="name" v-html="getMod(name)"></li>
+            </ul>
+          </div>
+          <div class="col optical-tunings ms-3 mt-4">
+            <h6>Optikai Tuningok</h6>
+            <ul>
+              <li v-for="(label, name) in opticalMods" :key="name" v-html="getMod(name)"></li>
+            </ul>
+          </div>
         </div>
       </div>
     </h6>
@@ -233,7 +237,7 @@
   tbody {
     display: block;
     overflow: auto;
-    height: 12rem;
+    height: 11rem;
     width: 100%;
   }
 
