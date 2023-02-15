@@ -67,8 +67,8 @@
       });
 
       document.addEventListener('keydown', ({ key }) => {
-        if (key !== 'Escape') return;
         if (!this.visible) return;
+        if (key !== 'Escape' && key !== 'Home') return;
         this.close();
       });
     },
