@@ -156,11 +156,13 @@ ESX.RegisterServerCallback("requestPremiumStuff", function(source, cb)
 	local items = {}
 
 	for _, item in pairs(PREMIUM.items) do
-		item.label = ESX.GetItemLabel(item.name)
+		if type(item) == "table" then
+			item.label = ESX.GetItemLabel(item.name)
 
-		if item.label then
-			item.img = getItemImagePath(item.name)
-			table.insert(items, item)
+			if item.label then
+				item.img = getItemImagePath(item.name)
+				table.insert(items, item)
+			end
 		end
 	end
 
