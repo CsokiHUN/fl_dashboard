@@ -1,3 +1,5 @@
+local lastOpen = GetGameTimer()
+
 Settings = {
 	radar = {
 		label = "Radar megjelenítése",
@@ -73,21 +75,6 @@ Panel = {
 	},
 
 	init = function(self)
-		local lastOpen = GetGameTimer()
-
-		RegisterCommand("dashboard", function()
-			local currentTime = GetGameTimer()
-			if lastOpen + 500 > currentTime then
-				return
-			end
-			self:toggle()
-			lastOpen = currentTime
-		end)
-		CreateThread(function()
-			Wait(1)
-			RegisterKeyMapping("dashboard", "Dashboard megnyitasa", "keyboard", "HOME")
-		end)
-
 		RegisterNUICallback("close", function(...)
 			self:toggle(...)
 		end)
@@ -229,16 +216,33 @@ exports("isSettingEnabled", isSettingEnabled)
 	end)
 ]]
 
-CreateThread(function()
-	Wait(500)
 
-	while not ESX.IsPlayerLoaded() do
-		Wait(1)
+
+RegisterCommand("dashboard", function()
+	local currentTime = GetGameTimer()
+	if lastOpen + 500 > currentTime then
+		return
+	end
+	Panel:toggle()
+	lastOpen = currentTime
+end)
+
+local function bindKey()
+	RegisterKeyMapping("dashboard", "Dashboard megnyitasa", "keyboard", "HOME")
+end
+
+AddEventHandler("onClientResourceStart", function(resourceName)
+	if resourceName ~= GetCurrentResourceName() then
+		return
 	end
 
-	Panel:init()
+	if ESX.IsPlayerLoaded() then
+		Panel:init()
+		bindKey()
+	end
 end)
 
 RegisterNetEvent("esx:playerLoaded", function()
-	TriggerServerEvent(GetCurrentResourceName() .. "->playerLoaded")
+	Panel:init()
+	bindKey()
 end)
