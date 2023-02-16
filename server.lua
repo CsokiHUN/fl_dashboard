@@ -35,9 +35,9 @@ CreateThread(function()
 	end
 end)
 
-RegisterNetEvent(GetCurrentResourceName() .. "->playerLoaded", function()
-	Player(source).state.joinTime = os.time()
-	loadPlayerPlayedTime(source)
+AddEventHandler("esx:playerLoaded", function(player)
+	Player(player).state.joinTime = os.time()
+	loadPlayerPlayedTime(player)
 end)
 
 function loadPlayerPlayedTime(player)
