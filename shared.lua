@@ -7,7 +7,7 @@ ADMIN_GROUPS = {
 PREMIUM = {
 	items = {
 		{
-			name = "bread",
+			name = "burger",
 			price = 100,
 		},
 		{
@@ -15,8 +15,8 @@ PREMIUM = {
 			price = 100,
 		},
 		{
-			name = "stone",
-			price = 1000,
+			name = "cola",
+			price = 5,
 		},
 	},
 	vehicles = {
@@ -40,7 +40,7 @@ PREMIUM = {
 }
 
 function getItemImagePath(itemName)
-	return "nui://esx_inventoryhud/html/img/items/" .. itemName .. ".png"
+	return "nui://ox_inventory/web/images/" .. itemName .. ".png"
 end
 
 function getItemData(Item, typ)
