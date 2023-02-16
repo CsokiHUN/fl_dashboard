@@ -152,11 +152,25 @@ ESX.RegisterServerCallback("requestPlayerVehicles", function(source, cb)
 	end)
 end)
 
+function IsValidItem(name)
+	if not name then
+		return false
+	end
+
+	if GetResourceState("ox_inventory"):find("start") then
+		return exports.ox_inventory:Items(name) or false
+	end
+
+	ESX = exports.es_extended:getSharedObject() --refresh esx obj
+
+	return ESX.Items[name]
+end
+
 ESX.RegisterServerCallback("requestPremiumStuff", function(source, cb)
 	local items = {}
 
 	for _, item in pairs(PREMIUM.items) do
-		if type(item) == "table" then
+		if IsValidItem(item.name) then
 			item.label = ESX.GetItemLabel(item.name)
 
 			if item.label then
@@ -183,8 +197,7 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 	end
 
 	if typ == "items" then
-		local itemLabel = ESX.GetItemLabel(item.name)
-		if not itemLabel then
+		if not IsValidItem(item.name) then
 			return chatbox(("Érvénytelen tárgy! %s"):format(item.name), {255, 0, 0}, source)
 		end
 
@@ -195,7 +208,7 @@ ESX.RegisterServerCallback("buyPremiumItem", function(source, cb, item, typ, lab
 
 		xPlayer.addInventoryItem(item.name, 1)
 		takePlayerPP(source, item.price)
-		chatbox("Sikeres vásároltál egy " .. itemLabel .. " tárgyat", { 0, 255, 0 }, source)
+		chatbox("Sikeres vásároltál egy " .. ESX.GetItemLabel(item.name) .. " tárgyat", { 0, 255, 0 }, source)
 	elseif typ == "vehicles" then
 		takePlayerPP(source, item.price)
 
